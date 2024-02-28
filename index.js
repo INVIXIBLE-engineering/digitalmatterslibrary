@@ -117,7 +117,7 @@ exports.processData = async function (buf) {
                                 i = i + 2
                             }
                             break
-                        case (7): //Ananlog Data 32bit
+                        case (7): //Analog Data 32bit
                             for (let i = 0; i < field.fIdData.length; i++) {
                                 try{
                                     shapedData.values[`AI${field.fIdData[i]}`] = field.fIdData.readInt32LE(i + 1)
@@ -125,6 +125,16 @@ exports.processData = async function (buf) {
                                     console.error(`Analog Data 32 bit error for field.fIdData[i] ${field.fIdData[i]}`, e)
                                 }
                                 i = i + 4
+                            }
+                            break
+                        case (29): // Bluetooth tag list
+                            shapedData.values['bluetoothTagList'] = field.fIdData.toString('hex')
+                            break
+                        case (30): // Bluetooth data
+                            if (shapedData?.values?.bluetoothData){
+                                shapedData.values.bluetoothData.push(field.fIdData.toString('hex'))
+                            } else{
+                                shapedData?.values['bluetoothData'] = [field.fIdData.toString('hex')]
                             }
                             break
                         default:
