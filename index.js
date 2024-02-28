@@ -128,21 +128,29 @@ exports.processData = async function (buf) {
                             }
                             break
                         case (29): // Bluetooth tag list
-                            if (shapedData?.values?.bluetoothTagList){
-                                shapedData.values.bluetoothTagList.push(field.fIdData.toString('hex'))
-                            } else if (shapedData?.values){
-                                    shapedData.values['bluetoothTagList'] = [field.fIdData.toString('hex')]                                
-                            } else {
-                                console.error(`shapedData.values missing to add bluetoothTagList: ${field.fIdData.toString('hex')}`)
+                            try {
+                                if (shapedData?.values?.bluetoothTagList){
+                                    shapedData.values.bluetoothTagList.push(field.fIdData.toString('hex'))
+                                } else if (shapedData?.values){
+                                        shapedData.values['bluetoothTagList'] = [field.fIdData.toString('hex')]                                
+                                } else {
+                                    console.error(`shapedData.values missing to add bluetoothTagList: ${field.fIdData.toString('hex')}`)
+                                }
+                            } catch(e) {
+                                console.error(`Error getting bluetooth tag list: ${e}`)
                             }
                             break
                         case (30): // Bluetooth data
-                            if (shapedData?.values?.bluetoothData){
-                                shapedData.values.bluetoothData.push(field.fIdData.toString('hex'))
-                            } else if (shapedData?.values){
-                                    shapedData.values['bluetoothData'] = [field.fIdData.toString('hex')]                                
-                            } else {
-                                console.error(`shapedData.values missing to add bluetoothData: ${field.fIdData.toString('hex')}`)
+                            try {
+                                if (shapedData?.values?.bluetoothData){
+                                    shapedData.values.bluetoothData.push(field.fIdData.toString('hex'))
+                                } else if (shapedData?.values){
+                                        shapedData.values['bluetoothData'] = [field.fIdData.toString('hex')]                                
+                                } else {
+                                    console.error(`shapedData.values missing to add bluetoothData: ${field.fIdData.toString('hex')}`)
+                                }
+                            } catch(e){
+                                console.error(`Error getting bluetooth data: ${e}`)
                             }
                             break
                         default:
