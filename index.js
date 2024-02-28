@@ -133,8 +133,8 @@ exports.processData = async function (buf) {
                         case (30): // Bluetooth data
                             if (shapedData?.values?.bluetoothData){
                                 shapedData.values.bluetoothData.push(field.fIdData.toString('hex'))
-                            } else{
-                                shapedData?.values['bluetoothData'] = [field.fIdData.toString('hex')]
+                            } else if (shapedData?.values){
+                                    shapedData.values['bluetoothData'] = [field.fIdData.toString('hex')]                                
                             }
                             break
                         default:
