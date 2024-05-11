@@ -90,6 +90,19 @@ exports.processData = async function (buf) {
                             gpsData.gpsUTCDateTime = new Date()
                             shapedData.values.gpsData = gpsData
                             break
+                        case (1): // Log data
+                            try {
+                                if (shapedData?.values?.debugLogsStore){
+                                    shapedData.values.debugLogsStore.push(field.fIdData.toString('hex'))
+                                } else if (shapedData?.values){
+                                        shapedData.values['debugLogsStore'] = [field.fIdData.toString('hex')]                                
+                                } else {
+                                    console.error(`shapedData.values missing to add debugLogsStore: ${field.fIdData.toString('hex')}`)
+                                }
+                            } catch(e) {
+                                console.error(`Error getting debug logs store: ${e}`)
+                            }
+                            break
                         case (2): //Digital Data
                             shapedData.values.digitalsIn = field.fIdData.readUInt32LE(0) //4 bytes
                             shapedData.values.digitalsOut = field.fIdData.readInt16LE(4) //2 bytes
