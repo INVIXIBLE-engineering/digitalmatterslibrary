@@ -6,6 +6,8 @@ var Q = require('q');
 exports.processData = async function (buf) {
     var deferred = Q.defer()
 
+    console.log('DM Library version: 1')
+    console.log('Processing data for fId 29, 30 and 1')
 
     try {
         let PROTOCOL = require('./lib/protocol.js')
