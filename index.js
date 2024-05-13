@@ -6,9 +6,6 @@ var Q = require('q');
 exports.processData = async function (buf) {
     var deferred = Q.defer()
 
-    console.log('DM Library version: 1')
-    console.log('Processing data for fId 29, 30 and 1')
-
     try {
         let PROTOCOL = require('./lib/protocol.js')
         let driver = new PROTOCOL()
@@ -94,10 +91,46 @@ exports.processData = async function (buf) {
                             break
                         case (1): // Log data
                             try {
+                                
+                                const debugStr = field.fIdData.toString('hex')
+                                const metaDataStr = debugStr.substring(0,1)
+
+                                const convertHexStrToByteArr = (hexString) => {
+                                    if (hexString.length % 2!== 0) {
+                                        console.error("Must have an even number of hex digits to convert to bytes");
+                                        return null
+                                    }
+                                    const numBytes = hexString.length / 2;
+                                    const byteArray = new Uint8Array(numBytes);
+                                    for (let i = 0; i < numBytes; i++) {
+                                        byteArray[i] = parseInt(hexString.substr(i * 2, 2), 16);
+                                    }
+                                    return byteArray;
+                                }
+
+                                const extractFirstTwoBits = (byteArray) => {
+                                    if (byteArray.length === 0) {
+                                        console.error("Byte array is empty")
+                                        return null
+                                    }
+                                    const firstByte = byteArray[0];
+                                    const firstTwoBits = (firstByte >> 6) & 0x03; // Shift right by 6 bits and mask with 0x03 to get the first 2 bits
+                                    return firstTwoBits;
+                                }
+
+                                const severity = extractFirstTwoBits(convertHexStrToByteArr(metaDataStr))
+
+                                const eventCode = parseInt(debugStr.substring(2,4))
+                                const message = Buffer.from(debugStr.substring(4), "hex").toString();
+
+                                const debugObj = {
+                                    severity, eventCode, message
+                                }
+
                                 if (shapedData?.values?.debugLogsStore){
-                                    shapedData.values.debugLogsStore.push(field.fIdData.toString('hex'))
+                                    shapedData.values.debugLogsStore.push(debugObj)
                                 } else if (shapedData?.values){
-                                        shapedData.values['debugLogsStore'] = [field.fIdData.toString('hex')]                                
+                                        shapedData.values['debugLog'] = [field.fIdData.toString('hex')]                                
                                 } else {
                                     console.error(`shapedData.values missing to add debugLogsStore: ${field.fIdData.toString('hex')}`)
                                 }
