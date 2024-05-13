@@ -90,15 +90,13 @@ exports.processData = async function (buf) {
                             shapedData.values.gpsData = gpsData
                             break
                         case (1): // Log data
-                            try {
-                                
+                            try {                                
                                 const debugStr = field.fIdData.toString('hex')
-                                const metaDataStr = debugStr.substring(0,1)
+                                const metaDataStr = debugStr.substring(0,2)
 
                                 const convertHexStrToByteArr = (hexString) => {
                                     if (hexString.length % 2!== 0) {
-                                        console.error("Must have an even number of hex digits to convert to bytes");
-                                        return null
+                                        throw Error("Must have an even number of hex digits to convert to bytes")
                                     }
                                     const numBytes = hexString.length / 2;
                                     const byteArray = new Uint8Array(numBytes);
@@ -110,8 +108,7 @@ exports.processData = async function (buf) {
 
                                 const extractFirstTwoBits = (byteArray) => {
                                     if (byteArray.length === 0) {
-                                        console.error("Byte array is empty")
-                                        return null
+                                        throw Error("Byte array is empty")
                                     }
                                     const firstByte = byteArray[0];
                                     const firstTwoBits = (firstByte >> 6) & 0x03; // Shift right by 6 bits and mask with 0x03 to get the first 2 bits
@@ -130,7 +127,7 @@ exports.processData = async function (buf) {
                                 if (shapedData?.values?.debugLogsStore){
                                     shapedData.values.debugLogsStore.push(debugObj)
                                 } else if (shapedData?.values){
-                                        shapedData.values['debugLog'] = [field.fIdData.toString('hex')]                                
+                                        shapedData.values['debugLog'] = [debugObj]                                
                                 } else {
                                     console.error(`shapedData.values missing to add debugLogsStore: ${field.fIdData.toString('hex')}`)
                                 }
